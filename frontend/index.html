@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supermarket — AI Kirana Store Manager</title>
+  <meta name="description" content="AI-Powered Conversational Operating System for Indian Kirana Stores & Supermarkets. Real-time billing, inventory control, GST calculations, and Khata ledger.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="store-badge">
+          <span class="store-icon">🛒</span>
+          <div>
+            <h1 class="store-title" id="store-title">Supermarket</h1>
+            <p class="store-subtitle">Conversational Kirana AI Operating System • Bengaluru, KA (GSTIN: 29AAAAA0000A1Z5)</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span class="status-text">Claude Agent Engine Ready</span>
+        </div>
+        <button id="btn-new-chat" class="btn btn-secondary" title="Start a fresh chat context (keeps store data & preferences)">
+          <span class="btn-icon">↺</span> /new Session
+        </button>
+        <button id="btn-reset-demo" class="btn btn-ghost" title="Reset sample catalog & inventory">
+          Reset Demo
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN DUAL-PANEL WORKSPACE -->
+    <main class="main-workspace">
+      <!-- LEFT / CENTER: CONVERSATIONAL AGENT HUB -->
+      <section class="chat-section">
+        <div class="chat-header">
+          <div class="chat-title-group">
+            <span class="agent-avatar">🤖</span>
+            <div>
+              <h2 class="chat-title">Kirana Store Manager AI</h2>
+              <span class="agent-sub">Reasoning • Domain Tools • Guardrails Enforced</span>
+            </div>
+          </div>
+          <div class="chat-controls">
+            <span id="session-tag" class="session-badge">Session: Active</span>
+          </div>
+        </div>
+
+        <!-- QUICK PROMPT TEST SCENARIOS BAR -->
+        <div class="scenario-bar">
+          <span class="scenario-label">Try these examples:</span>
+          <div class="scenario-chips" id="scenario-chips">
+            <button class="chip" data-prompt="50 packets of Maggi came in, cost 12, MRP 14">📦 Add New Stock</button>
+            <button class="chip" data-prompt="Make a bill: 2kg sugar, 1 Aashirvaad atta 5kg, 4 Maggi">🧾 Create New Bill</button>
+            <button class="chip" data-prompt="Remove the butter">✂️ Remove Item</button>
+            <button class="chip" data-prompt="Make Maggi 6">✏️ Update Quantity</button>
+            <button class="chip" data-prompt="UPI">📱 Pay via UPI</button>
+            <button class="chip" data-prompt="Finalize">✅ Complete Sale</button>
+            <button class="chip chip-danger" data-prompt="Make a bill for 100 Maggi">🛑 Test Low Stock</button>
+            <button class="chip" data-prompt="Put 500 on Ramesh's credit">📒 Give Store Credit</button>
+            <button class="chip" data-prompt="Ramesh paid 300">💰 Receive Payment</button>
+            <button class="chip" data-prompt="What's Ramesh's balance?">❓ Check Balance</button>
+            <button class="chip chip-pdf" data-prompt="Send me that bill as PDF">📄 Generate PDF</button>
+            <button class="chip chip-pptx" data-prompt="Make this week's sales analysis deck">📊 Sales Report</button>
+            <button class="chip" data-prompt="Always assume UPI unless I say cash">⚙️ Set Default to UPI</button>
+          </div>
+        </div>
+
+        <!-- MESSAGE STREAM -->
+        <div class="chat-messages" id="chat-messages">
+          <div class="message assistant-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-body">
+              <div class="message-sender">Kirana Manager AI</div>
+              <div class="message-content">
+                Namaste! 🙏 I am your autonomous AI Store Manager for <strong>Supermarket</strong>.
+                <br/><br/>
+                You can manage your entire store naturally through this conversational interface:
+                <ul>
+                  <li><strong>Inventory Inward:</strong> <em>"50 packets of Maggi came in, cost 12, MRP 14"</em></li>
+                  <li><strong>Multi-turn Billing:</strong> <em>"Make a bill: 2kg sugar, 1 Aashirvaad atta 5kg, 4 Maggi"</em></li>
+                  <li><strong>Draft Editing:</strong> <em>"Remove the butter"</em> or <em>"Make Maggi 6"</em></li>
+                  <li><strong>Atomic Finalization:</strong> <em>"UPI"</em> &rarr; <em>"Finalize"</em></li>
+                  <li><strong>Khata Credit Ledger:</strong> <em>"Put 500 on Ramesh's credit"</em> / <em>"Ramesh paid 300"</em></li>
+                  <li><strong>Tax Documents:</strong> <em>"Send me invoice as PDF"</em> & <em>"Make sales analysis deck"</em></li>
+                </ul>
+                Try clicking any quick prompt pill above or type your request below!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT INPUT COMPOSER -->
+        <div class="chat-composer">
+          <form id="chat-form" class="composer-form">
+            <input 
+              type="text" 
+              id="chat-input" 
+              class="composer-input" 
+              placeholder="Type an item to bill (e.g., 'Maggi', '2kg Sugar') or ask a question..."
+              autocomplete="off"
+              required
+            />
+            <button type="submit" id="btn-send" class="btn btn-primary">
+              <span>Send</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+          <div class="composer-footer">
+            <span>⚡ Zero-latency deterministic guardrails active • Decimal currency precision • ACID transactions</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: LIVE BUSINESS STATE & AUDIT PANEL -->
+      <aside class="state-inspector">
+        <!-- TABS HEADER -->
+        <div class="inspector-tabs">
+          <button class="tab-btn active" data-tab="tab-draft" id="tab-btn-draft">
+            🧾 Current Bill <span id="badge-draft-count" class="tab-badge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="tab-inventory" id="tab-btn-inventory">
+            📦 Stock Levels <span id="badge-stock-count" class="tab-badge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="tab-khata" id="tab-btn-khata">
+            📒 Customer Credit (Khata)
+          </button>
+          <button class="tab-btn" data-tab="tab-analytics" id="tab-btn-analytics">
+            📊 Daily Sales
+          </button>
+          <button class="tab-btn" data-tab="tab-docs" id="tab-btn-docs">
+            📂 Invoices & Files
+          </button>
+        </div>
+
+        <!-- TAB CONTENT: ACTIVE DRAFT BILL -->
+        <div class="tab-pane active" id="tab-draft">
+          <div class="pane-header">
+            <h3>Current Draft Bill</h3>
+            <span class="draft-status-tag" id="draft-status-tag">STATUS: DRAFT</span>
+          </div>
+          
+          <div class="draft-slip" id="draft-slip">
+            <div class="draft-items-list" id="draft-items-list">
+              <p class="empty-hint">Draft bill is currently empty.<br/>Try saying: <em>"Make a bill with 2kg sugar and 4 Maggi"</em></p>
+            </div>
+
+            <div class="draft-summary" id="draft-summary" style="display: none;">
+              <div class="summary-line">
+                <span>Taxable Value:</span>
+                <span id="draft-subtotal">₹0.00</span>
+              </div>
+              <div class="summary-line">
+                <span>Central GST (CGST):</span>
+                <span id="draft-cgst">₹0.00</span>
+              </div>
+              <div class="summary-line">
+                <span>State GST (SGST):</span>
+                <span id="draft-sgst">₹0.00</span>
+              </div>
+              <div class="summary-line grand-total-line">
+                <span>Grand Total:</span>
+                <span id="draft-grand-total">₹0.00</span>
+              </div>
+              <div class="summary-line payment-line">
+                <span>Payment Mode:</span>
+                <span id="draft-payment-mode" class="payment-badge">UPI</span>
+              </div>
+
+              <div class="draft-actions">
+                <button id="btn-quick-finalize" class="btn btn-success btn-full">
+                  ⚡ Finalize & Decrement Stock
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: LIVE INVENTORY -->
+        <div class="tab-pane" id="tab-inventory">
+          <div class="pane-header">
+            <h3>Store Catalog & Stock Levels</h3>
+            <button id="btn-refresh-inv" class="btn-icon-sm" title="Refresh Stock">↻</button>
+          </div>
+          <div class="inventory-table-container">
+            <table class="data-table" id="inventory-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th>Stock</th>
+                  <th>Price</th>
+                  <th>GST</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: KHATA LEDGER -->
+        <div class="tab-pane" id="tab-khata">
+          <div class="pane-header">
+            <h3>Customer Khata Ledger</h3>
+            <span class="sub-hint">Derived from immutable credit/payment entries</span>
+          </div>
+          <div class="khata-cards" id="khata-cards">
+            <!-- Populated dynamically -->
+          </div>
+          
+          <div class="customer-ledger-view" id="customer-ledger-view" style="display: none;">
+            <div class="ledger-header">
+              <h4 id="ledger-customer-title">Customer Ledger</h4>
+              <button class="btn-close-sm" id="btn-close-ledger">&times;</button>
+            </div>
+            <div class="ledger-entries" id="ledger-entries"></div>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: SALES & GST ANALYTICS -->
+        <div class="tab-pane" id="tab-analytics">
+          <div class="pane-header">
+            <h3>Today's Financial Summary</h3>
+            <button id="btn-refresh-analytics" class="btn-icon-sm" title="Refresh Analytics">↻</button>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-label">Gross Sales</span>
+              <span class="kpi-val text-gold" id="kpi-sales">₹0.00</span>
+              <span class="kpi-sub" id="kpi-bills">0 Invoices Finalized</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">GST Remitted</span>
+              <span class="kpi-val text-emerald" id="kpi-gst">₹0.00</span>
+              <span class="kpi-sub" id="kpi-gst-split">CGST: ₹0 | SGST: ₹0</span>
+            </div>
+          </div>
+
+          <div class="payment-split-box">
+            <h4>Payment Distribution</h4>
+            <div class="split-bars">
+              <div class="split-row">
+                <span>UPI:</span>
+                <span id="split-upi" class="split-val">₹0.00</span>
+              </div>
+              <div class="split-row">
+                <span>Cash:</span>
+                <span id="split-cash" class="split-val">₹0.00</span>
+              </div>
+              <div class="split-row">
+                <span>Card:</span>
+                <span id="split-card" class="split-val">₹0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="analytics-actions">
+            <button id="btn-close-day" class="btn btn-secondary btn-full">
+              🌅 Close Day & Save Summary
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB CONTENT: DOCUMENTS HUB -->
+        <div class="tab-pane" id="tab-docs">
+          <div class="pane-header">
+            <h3>Generated Invoices & Decks</h3>
+          </div>
+          <div class="docs-list" id="docs-list">
+            <div class="doc-card" id="doc-pdf-card">
+              <div class="doc-icon">📄</div>
+              <div class="doc-details">
+                <h4>GST Tax Invoice (PDF)</h4>
+                <p>Tax-compliant PDF built via ReportLab with per-item HSN, CGST & SGST.</p>
+                <button id="btn-gen-pdf" class="btn btn-sm btn-outline">Generate Latest Invoice PDF</button>
+              </div>
+            </div>
+
+            <div class="doc-card" id="doc-pptx-card">
+              <div class="doc-icon">📊</div>
+              <div class="doc-details">
+                <h4>Weekly Sales Deck (PPTX)</h4>
+                <p>8-slide executive presentation generated via python-pptx with real Matplotlib charts.</p>
+                <button id="btn-gen-pptx" class="btn btn-sm btn-outline">Generate Sales Deck PPTX</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="recent-downloads" id="recent-downloads">
+            <h4>Generated Files</h4>
+            <div class="file-links" id="file-links">
+              <p class="empty-hint">Files generated via chat or buttons will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
